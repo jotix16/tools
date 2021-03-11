@@ -83,7 +83,7 @@ def load_config_py(filename, config_dict=None):
 datadirlink = "setup-data-dir-symlink"
 
 class Settings:
-    workdir_base = "/work/asr3/zeyer/zhobro"
+    workdir_base = "/work/asr3/zeyer"
 
 
 def find_info_file(base_dir, cur_dir):
