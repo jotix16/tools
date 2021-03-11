@@ -2,7 +2,7 @@
 
 import os, sys, re
 import argparse
-from lib.utils import test
+from lib.utils import test, sysexec, make_symlink, ls
 
 # from .utils import test
 
@@ -73,29 +73,17 @@ def load_config_py(filename, config_dict=None):
     return config_dict
 
 
-def make_symlink(src, dst):
-    test(src)
-    abssrc = os.path.join(os.path.dirname(dst), src) if src[:1] != "/" else src
-    test(os.path.exists(abssrc), "the link destination %s does not exists" % src)
-    if os.path.islink(dst):
-        curlink = os.readlink(dst)
-        test(curlink == src, "existing missmatching symlink: %s -> %s" % (dst, curlink))
-    else:
-        os.symlink(src, dst)
-
 # --------------------------------
 
 
 
 
-def ls(path):
-    sysexec("ls", "--color=auto", "-l", path)
+
 
 datadirlink = "setup-data-dir-symlink"
 
-
 class Settings:
-    workdir_base = "/work/asr2"
+    workdir_base = "/work/asr3/zeyer/zhobro"
 
 
 def find_info_file(base_dir, cur_dir):

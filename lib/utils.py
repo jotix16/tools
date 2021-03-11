@@ -26,6 +26,28 @@ def test(value, msg=None):
     if not value:
         raise AssertionError(*((msg,) if msg else ()))
 
+def ls(path):
+    sysexec("ls", "--color=auto", "-l", path)
+
+def make_symlink(src, dst):
+    test(src)
+    abssrc = os.path.join(os.path.dirname(dst), src) if src[:1] != "/" else src
+    test(os.path.exists(abssrc), "the link destination %s does not exists" % src)
+    if os.path.islink(dst):
+        curlink = os.readlink(dst)
+        test(curlink == src, "existing missmatching symlink: %s -> %s" % (dst, curlink))
+    else:
+        os.symlink(src, dst)
+
+
+
+
+
+
+
+
+
+
 
 
 def main():
