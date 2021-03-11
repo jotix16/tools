@@ -2,28 +2,7 @@
 # checked mikel
 import os, sys, re
 import argparse
-
-class ShellError(Exception):
-    def __init__(self, res):
-        self.exitCode = res
-        assert self.exitCode != 0
-        super(ShellError, self).__init__("exit code %i" % self.exitCode)
-
-
-def sysexec(*args, **kwargs):
-    import subprocess
-    res = subprocess.call(args, shell=False, **kwargs)
-    if res != 0:
-        raise ShellError(res)
-
-def sysexecVerbose(*args, **kwargs):
-    print("sysexec: %s" % (args,))
-    return sysexec(*args, **kwargs)
-
-# This is just like `assert`, except that it will not be optimized away.
-def test(value, msg=None):
-    if not value:
-        raise AssertionError(*((msg,) if msg else ()))
+from lib.utils import ShellError, test, sysexecVerbose
 
 parser = argparse.ArgumentParser()
 parser.add_argument('source')
