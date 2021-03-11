@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # checked mikel
 import os, sys, re
-from lib.utils import *
 import argparse
 
 class ShellError(Exception):
