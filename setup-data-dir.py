@@ -2,7 +2,6 @@
 
 import os, sys, re
 import argparse
-from lib.utils import test, make_symlink, ls
 
 # ------------------------       Helpers        ------------------------
 class ShellError(Exception):
