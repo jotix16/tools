@@ -7,7 +7,7 @@ from lib.utils import test, make_symlink, ls, ObjAsDict, load_config_py, sysexec
 datadirlink = "setup-data-dir-symlink"
 
 class Settings:
-    workdir_base = "/work/asr3/zeyer"
+    workdir_base = "/tmp"
 
 
 def find_info_file(base_dir, cur_dir):
