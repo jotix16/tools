@@ -3,25 +3,6 @@
 import os, sys, re
 import argparse
 from lib.utils import ShellError, sysexec, test, sysexecVerbose
-class ShellError(Exception):
-    """ Costum exception for shell comands that prints the exit code. """
-    def __init__(self, res):
-        self.exitCode = res
-        assert self.exitCode != 0
-        super(ShellError, self).__init__("exit code %i" % self.exitCode)
-
-
-def sysexec(*args, **kwargs):
-    """ Executes a shell comand given by *args """
-    import subprocess
-    res = subprocess.call(args, shell=False, **kwargs)
-    if res != 0:
-        raise ShellError(res)
-
-def test(value, msg=None):
-    """ If value is False or None it asserts and possibly prints msg """
-    if not value:
-        raise AssertionError(*((msg,) if msg else ()))
 
 parser = argparse.ArgumentParser()
 parser.add_argument('source')
@@ -49,3 +30,8 @@ except ShellError as e:
 	print("%s. Try to continue though, maybe still works." % e)
 sysexecVerbose("git", "submodule", "foreach", "git", "config", "credential.helper", "store")
 sysexecVerbose("git", "submodule", "foreach", "git", "checkout", "-B", "master", "origin/master")
+
+print("> Change into tools-multistep %s" % "tools-multisetup/")
+os.chdir("tools-multisetup/")
+sysexecVerbose("git", "submodule", "init")
+sysexecVerbose("git", "submodule", "update")
