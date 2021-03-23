@@ -2,82 +2,9 @@
 
 import os, sys, re
 import argparse
-from lib.utils import test, sysexec, make_symlink, ls
+from lib.utils import test, make_symlink, ls, ObjAsDict, load_config_py, sysexecOut
 
 # from .utils import test
-
-class ObjAsDict:
-    Blacklist = ("__dict__", "__weakref__")
-
-    def __init__(self, obj):
-        self.__obj = obj
-
-    def __getitem__(self, item):
-        if not isinstance(item, (str, unicode)):
-            raise KeyError("%r must be a str" % (item,))
-        try:
-            return getattr(self.__obj, item)
-        except AttributeError as e:
-            raise KeyError(e)
-
-    def __setitem__(self, item, value):
-        if hasattr(self.__obj, item) and getattr(self.__obj, item) is value:
-            return
-        setattr(self.__obj, item, value)
-
-    def update(self, other):
-        items = other.items() if isinstance(other, dict) else other
-        for k, v in items:
-            self[k] = v
-
-    def keys(self):
-        return [k for k in vars(self.__obj).keys() if k not in self.Blacklist]
-
-    def items(self):
-        return [(k, v) for (k, v) in vars(self.__obj).items() if k not in self.Blacklist]
-
-    def __iter__(self):
-        return iter(self.keys())
-
-    def __repr__(self):
-        return "<ObjAsDict %r -> %r>" % (self.__obj, dict(self.items()))
-
-
-def custom_exec(source, source_filename, user_ns, user_global_ns):
-    if not source.endswith("\n"):
-        source += "\n"
-    co = compile(source, source_filename, "exec")
-    user_global_ns["__package__"] = __package__  # important so that imports work when CRNN itself is loaded as a package
-    eval(co, user_global_ns, user_ns)
-
-
-def load_config_py(filename, config_dict=None):
-    """
-    :param str filename:
-    :param dict[str]|ObjAsDict|None config_dict: if given, will update inplace
-    :return: config_dict (same instance)
-    :rtype: dict[str]
-    """
-    content = open(filename).read()
-    if config_dict is None:
-        config_dict = {}
-    if isinstance(config_dict, dict):
-        user_ns = config_dict
-    else:
-        user_ns = dict(config_dict)
-    # Always overwrite:
-    user_ns.update({"config": config_dict, "__file__": filename, "__name__": "__crnn_config__"})
-    custom_exec(content, filename, user_ns, user_ns)
-    if user_ns is not config_dict:
-        config_dict.update(user_ns)
-    return config_dict
-
-
-# --------------------------------
-
-
-
-
 
 
 datadirlink = "setup-data-dir-symlink"
@@ -106,7 +33,8 @@ def setup_data_dir(newdir=None):
     if info_file:
         load_config_py(info_file, ObjAsDict(Settings))
 
-    user = os.environ["USER"].strip()
+    user = os.environ["USER"].strip() if "USER" in os.environ else sysexecOut("whoami").strip() # logname for mac with zsh
+    print(user)
     assert user
     workdir = "%s/%s/setups-data/%s" % (Settings.workdir_base, user, curdir[len(setup_dir_prefix):])
     print("Work dir: %s" % workdir)
