@@ -2,7 +2,7 @@
 # checked mikel
 import os, sys, re
 import argparse
-
+from libs.utils import ShellError, sysexec, test, sysexecVerbose
 class ShellError(Exception):
     """ Costum exception for shell comands that prints the exit code. """
     def __init__(self, res):
