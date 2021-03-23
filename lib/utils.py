@@ -184,7 +184,7 @@ def get_func_name(func):
 
 # needed in tools.py
 def load_config_py(filename, config_dict=None):
-    """
+    """   Updates config_dict with entries from the dict build from filename
     :param str filename:
     :param dict[str]|ObjAsDict|None config_dict: if given, will update inplace
     :return: config_dict (same instance)
