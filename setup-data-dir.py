@@ -8,6 +8,7 @@ datadirlink = "setup-data-dir-symlink"
 
 class Settings:
     workdir_base = "/tmp"
+    dataset = "/tmp/dataset"
 
 
 def find_info_file(base_dir, cur_dir):
@@ -83,6 +84,29 @@ def auto_update_dirs():
         print(">>> Dir: %s" % d)
         setup_data_dir(d)
 
+def setup_dataset_dir():
+    curdir = os.getcwd()
+    print("Current dir: %s" % curdir)
+    setup_dir_prefix = os.path.realpath(os.path.expanduser("~/setups")) + "/"
+    test(curdir.startswith(setup_dir_prefix), "Error: Must be in %s" % setup_dir_prefix)
+    dir_info = curdir + "/dataset-dir-info.py"
+    if not os.path.exists(dir_info):
+        print("Couldnt find %s!" % dir_info, "Please make sure you are calling\
+              this function fromthe base file and the info file exists.")
+        return
+
+    # Load the path from dataset-dir-info.py
+    load_config_py(dir_info, ObjAsDict(Settings))
+    test(os.path.exists(Settings.dataset), "Error: The specified path to dataset \
+         doesn't exist. Please put the right path in %s/setup-data-dir-info.py!" % curdir)
+
+    # Create the Symlink
+    print("Creating dataset_symlink.")
+    dataset_symlink = curdir + "/dataset_symlink"
+    if os.path.exists(dataset_symlink):
+        print("Removing old dataset_symlink")
+        os.remove(dataset_symlink)
+    os.symlink(Settings.dataset, curdir+"/dataset_symlink")
 
 if __name__ == "__main__":
 
@@ -100,4 +124,4 @@ if __name__ == "__main__":
         for d in args.dirs:
             print(">>> Dir: %s" % d)
             setup_data_dir(d)
-
+    setup_dataset_dir()
