@@ -92,21 +92,22 @@ def setup_dataset_dir():
     dir_info = curdir + "/dataset-dir-info.py"
     if not os.path.exists(dir_info):
         print("Couldnt find %s!" % dir_info, "Please make sure you are calling\
-              this function fromthe base file and the info file exists.")
+              this function from the base file and the info file exists.")
         return
 
     # Load the path from dataset-dir-info.py
     load_config_py(dir_info, ObjAsDict(Settings))
-    test(os.path.exists(Settings.dataset), "Error: The specified path to dataset \
-         doesn't exist. Please put the right path in %s/setup-data-dir-info.py!" % curdir)
-
-    # Create the Symlink
-    print("Creating dataset_symlink.")
-    dataset_symlink = curdir + "/dataset_symlink"
-    if os.path.exists(dataset_symlink):
-        print("Removing old dataset_symlink")
-        os.remove(dataset_symlink)
-    os.symlink(Settings.dataset, curdir+"/dataset_symlink")
+    if not os.path.exists(Settings.dataset): 
+        print(""" WARN: The specified path to dataset %s doesn't exist. Please put the
+ correct path in %s and run again if you want a symlink to the dataset!""" % (Settings.dataset ,dir_info))
+    else:
+        # Create the Symlink
+        print("Creating dataset_symlink.")
+        dataset_symlink = curdir + "/dataset_symlink"
+        if os.path.exists(dataset_symlink):
+            print("Removing old dataset_symlink")
+            os.remove(dataset_symlink)
+        os.symlink(Settings.dataset, curdir+"/dataset_symlink")
 
 if __name__ == "__main__":
 
