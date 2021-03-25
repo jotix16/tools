@@ -84,7 +84,9 @@ def auto_update_dirs():
         print(">>> Dir: %s" % d)
         setup_data_dir(d)
 
+
 def setup_dataset_dir():
+    """Symlink to the dataset"""
     curdir = os.getcwd()
     print("Current dir: %s" % curdir)
     setup_dir_prefix = os.path.realpath(os.path.expanduser("~/setups")) + "/"
@@ -107,14 +109,26 @@ def setup_dataset_dir():
         if os.path.exists(dataset_symlink):
             print("Removing old dataset_symlink")
             os.remove(dataset_symlink)
-        os.symlink(Settings.dataset, curdir+"/dataset_symlink")
+        os.symlink(Settings.dataset, dataset_symlink)
+
+
+def setup_pkg_dir():
+    """ Symlink to github packages in ~/return/pkg."""
+    curdir = os.getcwd()
+    pkg_path = os.path.join(os.path.expanduser("~"), "returnn/pkg")
+    print("Creating pkg_symlink.")
+    pkg_symlink = curdir + "/pkg_symlink"
+    if os.path.exists(pkg_symlink):
+        print("Removing old pkg_symlink")
+        os.remove(pkg_symlink)
+    os.symlink(pkg_path, pkg_symlink)
+
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser()
     parser.add_argument('dirs',
-        nargs='*',
-        help='which dir symlinks we should check/update')
+                        nargs='*',
+                        help='which dir symlinks we should check/update')
     args = parser.parse_args()
 
     if len(args.dirs) == 0:
@@ -126,3 +140,4 @@ if __name__ == "__main__":
             print(">>> Dir: %s" % d)
             setup_data_dir(d)
     setup_dataset_dir()
+    setup_pkg_dir()
