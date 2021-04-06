@@ -6,6 +6,7 @@ from lib.utils import test, make_symlink, ls, ObjAsDict, load_config_py, sysexec
 
 datadirlink = "setup-data-dir-symlink"
 
+
 class Settings:
     workdir_base = "/tmp"
     dataset = "/tmp/dataset"
@@ -31,7 +32,7 @@ def setup_data_dir(newdir=None):
     if info_file:
         load_config_py(info_file, ObjAsDict(Settings))
 
-    user = os.environ["USER"].strip() if "USER" in os.environ else sysexecOut("whoami").strip() # logname for mac with zsh
+    user = os.environ["USER"].strip() if "USER" in os.environ else sysexecOut("whoami").strip()  # logname for mac with zsh
     assert user
     workdir = "%s/%s/setups-data/%s" % (Settings.workdir_base, user, curdir[len(setup_dir_prefix):])
     print("Work dir: %s" % workdir)
@@ -51,7 +52,8 @@ def setup_data_dir(newdir=None):
         os.symlink(workdir, datadirlink)
         ls(datadirlink)
 
-    if newdir is None: return # stop here
+    if newdir is None:
+        return  # stop here
     test(newdir)
     test("/" not in newdir, "Error: %r must not contain slashes" % newdir)
 
@@ -64,16 +66,17 @@ def setup_data_dir(newdir=None):
     ls(newdir)
 
 
-
 def auto_update_dirs():
     curdir = os.getcwd()
     print("Automatically update dirs. Current dir: %s" % curdir)
 
     for d in os.listdir(curdir):
         fulldir = os.path.join(curdir, d)
-        if not os.path.islink(fulldir): continue
+        if not os.path.islink(fulldir):
+            continue
         link = os.readlink(fulldir)
-        if not link.startswith(datadirlink + "/"): continue
+        if not link.startswith(datadirlink + "/"):
+            continue
         print(">>> Dir: %s" % d)
         setup_data_dir(d)
 
@@ -81,13 +84,14 @@ def auto_update_dirs():
 def setup_dataset_dir():
     """Symlink to the dataset"""
     curdir = os.getcwd()
-    if not os.path.exists(Settings.dataset): 
+    if not os.path.exists(Settings.dataset):
+        setup_dir_prefix = os.path.realpath(os.path.expanduser("~/setups")) + "/"
         print(""" WARN: The specified path to dataset %s doesn't exist. Please
               put the correct path in %s and run again if you want a symlink to
               the dataset!""" % (Settings.dataset, find_info_file(setup_dir_prefix[:-1], curdir)))
     else:
         # Create the Symlink
-        dataset_symlink = curdir + "/dataset_symlink"
+        dataset_symlink = curdir + "/data-common"
         if os.path.exists(dataset_symlink):
             print("Removing old dataset_symlink")
             os.remove(dataset_symlink)
@@ -99,7 +103,7 @@ def setup_pkg_dir():
     """ Symlink to github packages in ~/return/pkg."""
     curdir = os.getcwd()
     pkg_path = os.path.join(os.path.expanduser("~"), "returnn/pkg")
-    if not os.path.exists(pkg_path): 
+    if not os.path.exists(pkg_path):
         print("WARN: The specified path to dataset %s doesn't exist." % pkg_path)
     else:
         # Create the Symlink
