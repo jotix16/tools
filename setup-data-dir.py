@@ -10,7 +10,7 @@ datadirlink = "setup-data-dir-symlink"
 class Settings:
     workdir_base = "/tmp"
     dataset = "/tmp/dataset"
-    dump_align_data = "/tmp/dump-align/data"
+    dump_align = "/tmp/dump-align/data"
 
 
 def find_info_file(base_dir, cur_dir):
@@ -119,19 +119,31 @@ def setup_pkg_dir():
 def setup_dump_align():
     """Symlink to the dataset"""
     curdir = os.getcwd()
-    if not os.path.exists(Settings.dump_align_data):
+    if not os.path.exists(Settings.dump_align):
         setup_dir_prefix = os.path.realpath(os.path.expanduser("~/setups")) + "/"
         print(""" WARN: The specified path to dump_align %s doesn't exist. Please
               put the correct path in %s and run again if you want a symlink to
-              the dump_align!""" % (Settings.dump_align_data, find_info_file(setup_dir_prefix[:-1], curdir)))
+              the dump_align!""" % (Settings.dump_align, find_info_file(setup_dir_prefix[:-1], curdir)))
     else:
         # Create the Symlink
+        dump_align_setup_data_dir = os.path.join(curdir, datadirlink)
         dump_align = curdir + "/dump-align/data"
-        if os.path.exists(dump_align):
-            print("Removing old dataset_symlink")
+        print(dump_align, os.path.exists(dump_align))
+        if os.path.isfile(dump_align):
+            print("Removing old dump_align data symlink")
             os.remove(dump_align)
-        print("Creating dataset_symlink.")
-        os.symlink(Settings.dump_align_data, dump_align)
+        if os.path.exists(dump_align_setup_data_dir):
+            print("Removing old dump_align setup-data-dir symlink")
+            os.remove(dump_align_setup_data_dir)
+
+        print("Creating dump_align symlinks.")
+        os.symlink(Settings.dump_align, dump_align_setup_data_dir)
+        src_dump_align_data = os.path.join(dump_align_setup_data_dir, "data")
+        if os.path.exists(src_dump_align_data):
+            print("Creating dump_align data symlinks.")
+            os.symlink(src_dump_align_data, dump_align)
+        else:
+            print(src_dump_align_data, "data doesnt exist")
 
 
 if __name__ == "__main__":
