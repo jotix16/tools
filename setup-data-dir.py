@@ -10,6 +10,7 @@ datadirlink = "setup-data-dir-symlink"
 class Settings:
     workdir_base = "/tmp"
     dataset = "/tmp/dataset"
+    dump_align_data = "/tmp/dump-align/data"
 
 
 def find_info_file(base_dir, cur_dir):
@@ -108,6 +109,22 @@ def setup_pkg_dir():
     else:
         # Create the Symlink
         pkg_symlink = curdir + "/pkg_symlink"
+        if os.path.exists(pkg_symlink):
+            print("Removing old pkg_symlink")
+            os.remove(pkg_symlink)
+        print("Creating pkg_symlink.")
+        os.symlink(pkg_path, pkg_symlink)
+
+
+def setup_dump_align():
+    """ Symlink to github packages in ~/return/pkg."""
+    curdir = os.getcwd()
+    pkg_path = os.path.join(os.path.expanduser("~"), "returnn/pkg")
+    if not os.path.exists(pkg_path):
+        print("WARN: The specified path to dataset %s doesn't exist." % pkg_path)
+    else:
+        # Create the Symlink
+        pkg_symlink = curdir + "/dump-align/data"
         if os.path.exists(pkg_symlink):
             print("Removing old pkg_symlink")
             os.remove(pkg_symlink)
