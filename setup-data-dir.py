@@ -117,19 +117,21 @@ def setup_pkg_dir():
 
 
 def setup_dump_align():
-    """ Symlink to github packages in ~/return/pkg."""
+    """Symlink to the dataset"""
     curdir = os.getcwd()
-    pkg_path = os.path.join(os.path.expanduser("~"), "returnn/pkg")
-    if not os.path.exists(pkg_path):
-        print("WARN: The specified path to dataset %s doesn't exist." % pkg_path)
+    if not os.path.exists(Settings.dump_align_data):
+        setup_dir_prefix = os.path.realpath(os.path.expanduser("~/setups")) + "/"
+        print(""" WARN: The specified path to dump_align %s doesn't exist. Please
+              put the correct path in %s and run again if you want a symlink to
+              the dump_align!""" % (Settings.dump_align_data, find_info_file(setup_dir_prefix[:-1], curdir)))
     else:
         # Create the Symlink
-        pkg_symlink = curdir + "/dump-align/data"
-        if os.path.exists(pkg_symlink):
-            print("Removing old pkg_symlink")
-            os.remove(pkg_symlink)
-        print("Creating pkg_symlink.")
-        os.symlink(pkg_path, pkg_symlink)
+        dump_align = curdir + "/dump-align/data"
+        if os.path.exists(dump_align):
+            print("Removing old dataset_symlink")
+            os.remove(dump_align)
+        print("Creating dataset_symlink.")
+        os.symlink(Settings.dump_align_data, dump_align)
 
 
 if __name__ == "__main__":
@@ -149,4 +151,5 @@ if __name__ == "__main__":
             setup_data_dir(d)
     setup_dataset_dir()
     setup_pkg_dir()
+    setup_dump_align()
     print("Finished.")
