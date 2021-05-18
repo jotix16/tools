@@ -126,24 +126,17 @@ def setup_dump_align():
               the dump_align!""" % (Settings.dump_align, find_info_file(setup_dir_prefix[:-1], curdir)))
     else:
         # Create the Symlink
-        dump_align_setup_data_dir = os.path.join(curdir, datadirlink)
-        dump_align = curdir + "/dump-align/data"
-        print(dump_align, os.path.exists(dump_align))
-        if os.path.isfile(dump_align):
-            print("Removing old dump_align data symlink")
-            os.remove(dump_align)
+        dump_align_setup_data_dir = os.path.join(os.path.join(curdir, "dump-align"), datadirlink)
+        dump_align = os.path.join(curdir, "dump-align/data")
         if os.path.exists(dump_align_setup_data_dir):
             print("Removing old dump_align setup-data-dir symlink")
             os.remove(dump_align_setup_data_dir)
+        if os.path.isfile(dump_align) or (os.path.islink(dump_align) and not os.path.exists(dump_align)):
+            print("Removing old dump_align data symlink")
+            os.remove(dump_align)
 
-        print("Creating dump_align symlinks.")
         os.symlink(Settings.dump_align, dump_align_setup_data_dir)
-        src_dump_align_data = os.path.join(dump_align_setup_data_dir, "data")
-        if os.path.exists(src_dump_align_data):
-            print("Creating dump_align data symlinks.")
-            os.symlink(src_dump_align_data, dump_align)
-        else:
-            print(src_dump_align_data, "data doesnt exist")
+        os.symlink(os.path.join(datadirlink, "data"), dump_align)
 
 
 if __name__ == "__main__":
